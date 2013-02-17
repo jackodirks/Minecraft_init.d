@@ -1,0 +1,116 @@
+#!/bin/bash
+# /etc/init.d/minecraft
+# version 0.4.1 2013-02-16 (YYYY-MM-DD)
+
+### BEGIN INIT INFO
+# Provides:   minecraft
+# Required-Start: $local_fs $remote_fs
+# Required-Stop:  $local_fs $remote_fs
+# Should-Start:   $network
+# Should-Stop:    $network
+# Default-Start:  2 3 4 5
+# Default-Stop:   S 0 1 6
+# Short-Description:    Minecraft server
+# Description:    Starts the minecraft server
+### END INIT INFO
+
+#Settings
+SERVICE='craftbukkit-prod.jar'
+OPTIONS='nogui'
+USERNAME='minecraft'
+SCREENNAME='prod'
+MCPATH='/opt/minecraft/prod/'
+MAXHEAP=2048
+MINHEAP=1024
+HISTORY=1024
+CPU_COUNT=2
+INVOCATION="java -Xmx${MAXHEAP}M -Xms${MINHEAP}M -XX:+UseConcMarkSweepGC \
+-XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts \
+-jar $SERVICE $OPTIONS"
+
+mc_start() {
+  if  pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "$SERVICE is already running!"
+  else
+    echo "Starting $SERVICE..."
+    cd $MCPATH
+    sudo -u $USERNAME screen -h $HISTORY -dmS $SCREENNAME $INVOCATION
+    sleep 7
+    if pgrep -u $USERNAME -f $SERVICE > /dev/null
+    then
+      echo "$SERVICE is now running."
+    else
+      echo "Error! Could not start $SERVICE!"
+    fi
+  fi
+}
+
+mc_stop() {
+  if pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "Stopping $SERVICE"
+    sudo -u $USERNAME screen -p 0 -S $SCREENNAME -X stuff $'say SERVER SHUTTING DOWN IN 10 SECONDS. Saving map...\n'
+    sleep 7
+    sudo -u $USERNAME screen -p 0 -S $SCREENNAME -X stuff $'stop\n'
+    sleep 3
+  else
+    echo "$SERVICE was not running."
+  fi
+  if pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    echo "Error! $SERVICE could not be stopped."
+  else
+    echo "$SERVICE is stopped."
+  fi
+}
+
+mc_command() {
+  COMMAND=$1
+  if pgrep -u $USERNAME -f $SERVICE > /dev/null
+  then
+    pre_log_len=`wc -l "$MCPATH/server.log" | awk '{print $1}'`
+    echo "$SERVICE is running... executing command"
+    sudo -u $USERNAME screen -S $SCREENNAME -p 0 -X stuff "$COMMAND$(printf \\r)"
+    sleep .5 
+    # print output
+    tail -n $[`wc -l "$MCPATH/server.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/server.log"
+  fi
+}
+
+#Start-Stop here
+case "$1" in
+  start)
+    mc_start
+    ;;
+  stop)
+    mc_stop
+    ;;
+  restart)
+    mc_stop
+    mc_start
+    ;;
+  status)
+    if pgrep -u $USERNAME -f $SERVICE > /dev/null
+    then
+      echo "$SERVICE is running."
+    else
+      echo "$SERVICE is not running."
+    fi
+    ;;
+  command)
+    if [ $# -gt 1 ]; then
+	shift
+      mc_command "$*"
+    else
+      echo "Must specify server command (try 'help'?)"
+    fi
+    ;;
+
+  *)
+  echo "Usage: $0 {start|stop|status|restart|command \"server command\"}"
+  exit 1
+  ;;
+esac
+
+exit 0
