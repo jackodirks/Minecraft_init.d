@@ -1,6 +1,6 @@
-This script is cabable of stopping, starting, restarting and inserting commando's into a minecraft server. Important to note is that the filename and screenname should be unique to prevent errors.
+This script is cabable of stopping, starting, restarting and inserting commando's into a minecraft server. The script depends on the uniqueness of the name of the jarfile for checking if the server is still alive and the screen name must also be unique to make sure the script finds the correct screen to send commandos to. 
 
 Original version created by: unknown (http://www.minecraftwiki.net/wiki/Tutorials/Server_startup_script)
 Modified by: Jacko Dirks
 
-Feel free to edit or redistribute in any way. 
+Feel free to edit, use or redistribute in any way. 
