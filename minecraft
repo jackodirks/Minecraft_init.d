@@ -18,10 +18,10 @@
 SERVICE='craftbukkit-prod.jar'
 OPTIONS='nogui'
 USERNAME='minecraft'
-SCREENNAME='prod'
+SCREENNAME='minecraft'
 MCPATH='/opt/minecraft/prod/'
 MAXHEAP=1024
-MINHEAP=1024
+MINHEAP=512
 HISTORY=1024
 CPU_COUNT=2
 INVOCATION="java -Xmx${MAXHEAP}M -Xms${MINHEAP}M -XX:+UseConcMarkSweepGC \
@@ -41,7 +41,7 @@ mc_start() {
     then
       echo "$SERVICE is now running."
     else
-      echo "Error! Could not start $SERVICE!"
+      echo "Error! Could not start $SERVICE!" 1>&2
     fi
   fi
 }
@@ -59,7 +59,7 @@ mc_stop() {
   fi
   if pgrep -u $USERNAME -f $SERVICE > /dev/null
   then
-    echo "Error! $SERVICE could not be stopped."
+    echo "Error! $SERVICE could not be stopped." 1>&2
   else
     echo "$SERVICE is stopped."
   fi
@@ -72,7 +72,7 @@ mc_command() {
     pre_log_len=`wc -l "$MCPATH/server.log" | awk '{print $1}'`
     echo "$SERVICE is running... executing command"
     sudo -u $USERNAME screen -S $SCREENNAME -p 0 -X stuff "$COMMAND$(printf \\r)"
-    sleep .5 
+    sleep 3
     # print output
     tail -n $[`wc -l "$MCPATH/server.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/server.log"
   fi
