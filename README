@@ -5,13 +5,27 @@ Tested and created on Debian 6, don't see any reason why it should not work on U
 Depends on Screen and Java. Tested with OpenJDK JRE 6 headless.
 
 Usage:
+You may want to update the following variables:
+SERVICE: The name of the jarfile (Must be unique for every MC server you want to run)
+USERNAME: The user that is going to run minecraft. (Everything in the MC folder should be owned by this user)
+SCREENNAME: The name of the screen that is goig to run minecraft (Must be unique for every MC server you want to run)
+MCPATH: The absolute path to the folder of the MC server.
+CPU_COUNT: The amount of CPU cores you want the MC server to use.
+
+MAXHEAP and MINHEAP set the amount of RAM that MC will use. If find the current settings (0.5 GB min, 1 GB max) to be working fine on my server, which goes up to ten persons. For Tekkit 2G min and 3G max is advised (I run tekkit with 1G min/max, works fine).
+BYTESUFFIX handles the suffex, which inplicate if the MINHEAP and MAXHEAP are set as MB, GB, etc. See `man java` for more details.
+
+HISTORY is the amount of lines that is saved in the screen session. So if you connect to the MC screen session you can, per default, read a maximum of 1024 lines back.
+INVOCATION is the command that will be used to start the MC server.
+
+Installation:
 -Put this script in /etc/init.d/ under a name of your choosing (let's go for minecraft_server in this example)
 -Chmod it to be owned by Root and exectuable (chown root:root /etc/init.d/minecraft_server; chmod +x /etc/init.d/minecraft_server)
 -Now you can use it! Type `service minecraft_server start` to start it, type `service minecraft_server` to see all possibilities
 
 To make sure it starts on boot and stops gracefully on shutdown:
 -`insserv minecraft_server`
-See `man insserv for additional information`
+See `man insserv` for additional information
 
 Original version created by: unknown (http://www.minecraftwiki.net/wiki/Tutorials/Server_startup_script)
 Modified by: Jacko Dirks 

@@ -15,16 +15,17 @@
 ### END INIT INFO
 
 #Settings
-SERVICE='craftbukkit-prod.jar'
-OPTIONS='nogui'
+SERVICE='minecraft.jar'
 USERNAME='minecraft'
 SCREENNAME='minecraft'
-MCPATH='/opt/minecraft/prod/'
+MCPATH='/opt/minecraft/'
 MAXHEAP=1024
 MINHEAP=512
+BYTESUFFIX='M'
+OPTIONS='nogui'
 HISTORY=1024
 CPU_COUNT=2
-INVOCATION="java -Xmx${MAXHEAP}M -Xms${MINHEAP}M -XX:+UseConcMarkSweepGC \
+INVOCATION="java -Xmx${MAXHEAP}$BYTESUFFIX -Xms${MINHEAP}$BYTESUFFIX -XX:+UseConcMarkSweepGC \
 -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts \
 -jar $SERVICE $OPTIONS"
 
