@@ -1,6 +1,19 @@
-This script is cabable of stopping, starting, restarting and inserting commando's into a minecraft server. The script depends on the uniqueness of the name of the jarfile for checking if the server is still alive and the screen name must also be unique to make sure the script finds the correct screen to send commandos to. 
+This init script is capable of stopping, starting, restarting a Minecraft, Bukkit or Tekkit server. It can also insert commando's into a MC/Bukkit/Tekkit server. The script depends on the uniqueness of the name of the jarfile for checking if the server is still alive and the screen name must also be unique to make sure the script finds the correct screen to send commandos to. 
+
+Tested and created on Debian 6, don't see any reason why it should not work on Ubuntu. May also work on CentOS/RedHat/Fedora, but I am not so sure about that. 
+
+Depends on Screen and Java. Tested with OpenJDK JRE 6 headless.
+
+Usage:
+-Put this script in /etc/init.d/ under a name of your choosing (let's go for minecraft_server in this example)
+-Chmod it to be owned by Root and exectuable (chown root:root /etc/init.d/minecraft_server; chmod +x /etc/init.d/minecraft_server)
+-Now you can use it! Type `service minecraft_server start` to start it, type `service minecraft_server` to see all possibilities
+
+To make sure it starts on boot and stops gracefully on shutdown:
+-`insserv minecraft_server`
+See `man insserv for additional information`
 
 Original version created by: unknown (http://www.minecraftwiki.net/wiki/Tutorials/Server_startup_script)
-Modified by: Jacko Dirks
+Modified by: Jacko Dirks 
 
-Feel free to edit, use or redistribute in any way. 
+Feel free to edit, use or redistribute in any way. I appriciate any input regarding errors or updates to this script.

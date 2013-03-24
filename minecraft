@@ -1,6 +1,6 @@
 #!/bin/bash
 # /etc/init.d/minecraft
-# version 0.4.1 2013-02-16 (YYYY-MM-DD)
+# version 0.4.3 2013-03-24 (YYYY-MM-DD)
 
 ### BEGIN INIT INFO
 # Provides:   minecraft
