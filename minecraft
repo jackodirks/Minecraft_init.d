@@ -1,6 +1,6 @@
 #!/bin/bash
 # /etc/init.d/minecraft
-# version 0.4.3 2013-03-24 (YYYY-MM-DD)
+# version 0.4.4  29-07-2013 (DD-MM-YYYY)
 
 ### BEGIN INIT INFO
 # Provides:   minecraft
@@ -9,7 +9,7 @@
 # Should-Start:   $network
 # Should-Stop:    $network
 # Default-Start:  2 3 4 5
-# Default-Stop:   S 0 1 6
+# Default-Stop:   0 1 6
 # Short-Description:    Minecraft server
 # Description:    Starts the minecraft server
 ### END INIT INFO
@@ -20,12 +20,12 @@ USERNAME='minecraft'
 SCREENNAME='minecraft'
 MCPATH='/opt/minecraft/'
 MAXHEAP=1024
-MINHEAP=512
 BYTESUFFIX='M'
 OPTIONS='nogui'
 HISTORY=1024
 CPU_COUNT=2
-INVOCATION="java -Xmx${MAXHEAP}$BYTESUFFIX -Xms${MINHEAP}$BYTESUFFIX -XX:+UseConcMarkSweepGC \
+COMMAND_WAIT_TIME=7
+INVOCATION="java -Xmx${MAXHEAP}$BYTESUFFIX -XX:+UseConcMarkSweepGC -XX:+UseParNewGC \
 -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts \
 -jar $SERVICE $OPTIONS"
 
@@ -37,7 +37,7 @@ mc_start() {
     echo "Starting $SERVICE..."
     cd $MCPATH
     sudo -u $USERNAME screen -h $HISTORY -dmS $SCREENNAME $INVOCATION
-    sleep 7
+    sleep $COMMAND_WAIT_TIME
     if pgrep -u $USERNAME -f $SERVICE > /dev/null
     then
       echo "$SERVICE is now running."
@@ -52,9 +52,9 @@ mc_stop() {
   then
     echo "Stopping $SERVICE"
     sudo -u $USERNAME screen -p 0 -S $SCREENNAME -X stuff $'say SERVER SHUTTING DOWN IN 10 SECONDS. Saving map...\n'
-    sleep 7
+    sleep 10
     sudo -u $USERNAME screen -p 0 -S $SCREENNAME -X stuff $'stop\n'
-    sleep 3
+    sleep $COMMAND_WAIT_TIME
   else
     echo "$SERVICE was not running."
   fi
@@ -73,9 +73,11 @@ mc_command() {
     pre_log_len=`wc -l "$MCPATH/server.log" | awk '{print $1}'`
     echo "$SERVICE is running... executing command"
     sudo -u $USERNAME screen -S $SCREENNAME -p 0 -X stuff "$COMMAND$(printf \\r)"
-    sleep 3
+    sleep $COMMAND_WAIT_TIME
     # print output
     tail -n $[`wc -l "$MCPATH/server.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/server.log"
+  else 
+    echo "$SERVICE is not running!"
   fi
 }
 
