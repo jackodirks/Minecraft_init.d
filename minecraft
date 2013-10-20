@@ -18,17 +18,16 @@
 SERVICE='minecraft.jar'
 USERNAME='minecraft'
 SCREENNAME='minecraft'
-MCPATH='/opt/minecraft/'
-MAXHEAP=1024
-BYTESUFFIX='M'
-OPTIONS='nogui'
+MCPATH='/opt/minecraft/prod'
 HISTORY=1024
 CPU_COUNT=2
-COMMAND_WAIT_TIME=7
-INVOCATION="java -Xmx${MAXHEAP}$BYTESUFFIX -XX:+UseConcMarkSweepGC -XX:+UseParNewGC \
--XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts \
--jar $SERVICE $OPTIONS"
+$COMMAND_WAIT_TIME=7
+$OPTIONS=nogui
+JAVACMD=java
+JAVAPARAMS="-server -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -Xms1G -Xmx4G -jar"
+INVOCATION="$JAVACMD $JAVAPARAMS $SERVICE $OPTIONS" 
 
+echo $INVOCATION
 mc_start() {
   if  pgrep -u $USERNAME -f $SERVICE > /dev/null
   then
