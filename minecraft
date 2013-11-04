@@ -19,15 +19,19 @@ SERVICE='minecraft.jar'
 USERNAME='minecraft'
 SCREENNAME='minecraft'
 MCPATH='/opt/minecraft/prod'
+MAXHEAP=3
+MINHEAP=1
+BYTESUFFIX=G
 HISTORY=1024
 CPU_COUNT=2
-$COMMAND_WAIT_TIME=7
-$OPTIONS=nogui
+COMMAND_WAIT_TIME=7
+OPTIONS=nogui
 JAVACMD=java
-JAVAPARAMS="-server -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -Xms1G -Xmx4G -jar"
+JAVAPARAMS="-server -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=$CPU_COUNT -XX:+AggressiveOpts -Xms$MINHEAP$BYTESUFFIX -Xmx$MAXHEAP$BYTESUFFIX -jar"
 INVOCATION="$JAVACMD $JAVAPARAMS $SERVICE $OPTIONS" 
 
 echo $INVOCATION
+
 mc_start() {
   if  pgrep -u $USERNAME -f $SERVICE > /dev/null
   then
@@ -69,12 +73,12 @@ mc_command() {
   COMMAND=$1
   if pgrep -u $USERNAME -f $SERVICE > /dev/null
   then
-    pre_log_len=`wc -l "$MCPATH/server.log" | awk '{print $1}'`
+    pre_log_len=`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`
     echo "$SERVICE is running... executing command"
     sudo -u $USERNAME screen -S $SCREENNAME -p 0 -X stuff "$COMMAND$(printf \\r)"
     sleep $COMMAND_WAIT_TIME
     # print output
-    tail -n $[`wc -l "$MCPATH/server.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/server.log"
+    tail -n $[`wc -l "$MCPATH/logs/latest.log" | awk '{print $1}'`-$pre_log_len] "$MCPATH/logs/latest.log"
   else 
     echo "$SERVICE is not running!"
   fi
